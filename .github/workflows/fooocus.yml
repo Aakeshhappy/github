@@ -1,35 +1,31 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Python application
+name: Fooocus Setup and Run
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: read
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  build:
-
+  run-fooocus:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
-    - name: Install dependencies
+        python-version: '3.9'
+
+    - name: Install pygit2
+      run: pip install pygit2==1.15.1
+
+    - name: Clone Fooocus Repository
+      run: git clone https://github.com/lllyasviel/Fooocus.git /tmp/Fooocus
+
+    - name: Run Fooocus Script
       run: |
-        !pip install pygit2==1.15.1
-    - name: run fooocus
-      run: |
-        %cd /content
-        !git clone https://github.com/lllyasviel/Fooocus.git
-        %cd /content/Fooocus
-       !python entry_with_update.py --share --always-high-vram
-      
+        cd /tmp/Fooocus
+        python entry_with_update.py --share --always-high-vram
