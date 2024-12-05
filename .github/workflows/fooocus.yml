@@ -1,4 +1,4 @@
-name: Run Python Script
+name: Fooocus with GPU
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-python-script:
-    runs-on: ubuntu-latest
+  run-fooocus:
+    runs-on: self-hosted  # Use your self-hosted runner with GPU
 
     steps:
     - name: Checkout Code
@@ -22,10 +22,17 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pygit2==1.15.1 packaging
+        pip install pygit2==1.15.1 packaging torch torchvision
 
-    - name: Run Python Script
+    - name: Clone Fooocus Repository
+      run: git clone https://github.com/lllyasviel/Fooocus.git /tmp/Fooocus
+
+    - name: Install Fooocus Requirements
       run: |
-        git clone https://github.com/lllyasviel/Fooocus.git /tmp/Fooocus
+        cd /tmp/Fooocus
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run Fooocus Script
+      run: |
         cd /tmp/Fooocus
         python entry_with_update.py --share --always-high-vram
