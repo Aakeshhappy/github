@@ -19,13 +19,18 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Install Dependencies
+    - name: Install Python Dependencies
       run: |
-        pip install pygit2==1.15.1
-        pip install packaging
+        python -m pip install --upgrade pip
+        pip install pygit2==1.15.1 packaging
 
     - name: Clone Fooocus Repository
       run: git clone https://github.com/lllyasviel/Fooocus.git /tmp/Fooocus
+
+    - name: Install Fooocus Requirements
+      run: |
+        cd /tmp/Fooocus
+        pip install -r requirements.txt || echo "No requirements.txt found"
 
     - name: Run Fooocus Script
       run: |
